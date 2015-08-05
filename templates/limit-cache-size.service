@@ -1,0 +1,13 @@
+[Unit]
+Description=Mutalyzer limit cache size
+After=network.target
+
+[Service]
+ExecStart=/opt/mutalyzer/bin/limit-directory-size.bash /opt/mutalyzer/cache {{ mutalyzer_max_cache_size }}
+WorkingDirectory=/opt/mutalyzer
+User=mutalyzer
+Group=mutalyzer
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

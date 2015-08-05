@@ -1,0 +1,23 @@
+---
+- name: reload mutalyzer website
+  service: name=mutalyzer-website-{{ mutalyzer_current }} state=reloaded
+  # If a new version was just installed, we don't need to reload.
+  when: mutalyzer_current == mutalyzer_original
+
+- name: reload mutalyzer json service
+  service: name=mutalyzer-service-json-{{ mutalyzer_current }} state=reloaded
+  # If a new version was just installed, we don't need to reload.
+  when: mutalyzer_current == mutalyzer_original
+
+- name: reload mutalyzer soap service
+  service: name=mutalyzer-service-soap-{{ mutalyzer_current }} state=reloaded
+  # If a new version was just installed, we don't need to reload.
+  when: mutalyzer_current == mutalyzer_original
+
+- name: restart mutalyzer batch processor
+  service: name=mutalyzer-batch-processor-{{ mutalyzer_current }} state=restarted
+  # If a new version was just installed, we don't need to restart.
+  when: mutalyzer_current == mutalyzer_original
+
+- name: restart mutalyzer limit cache size
+  service: name=mutalyzer-limit-cache-size state=restarted

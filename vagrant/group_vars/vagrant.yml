@@ -1,0 +1,15 @@
+---
+ansible_ssh_host: 127.0.0.1
+ansible_ssh_port: "{{ lookup('env', 'MUTALYZER_PORT_FORWARD_SSH') | default(2522, true) }}"
+ansible_ssh_user: vagrant
+ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
+
+exim_mailname: mutalyzer.local
+exim_mailtype: local
+
+mutalyzer_server_name: mutalyzer.local
+mutalyzer_certificate: "{{ inventory_dir }}/certificates/mutalyzer.crt"
+mutalyzer_certificate_key: "{{ inventory_dir }}/certificates/mutalyzer.key"
+mutalyzer_database_password: dummy_password_in_vagrant
+
+mutalyzer_git_branch: master

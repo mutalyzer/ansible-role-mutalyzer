@@ -1,0 +1,77 @@
+---
+- name: add group mutalyzer
+  group: name=mutalyzer state=present
+
+- name: add user mutalyzer
+  user: name=mutalyzer
+        group=mutalyzer
+        shell=/bin/bash
+        state=present
+
+- name: add .bashrc for user mutalyzer
+  template: src=bashrc
+            dest=/home/mutalyzer/.bashrc
+            owner=mutalyzer
+            group=mutalyzer
+
+- name: install packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - build-essential
+    - git
+    - inotify-tools
+    - libmysqlclient-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - netcat-openbsd
+    - python-dev
+    - python-virtualenv
+    - swig
+
+- name: create the mutalyzer directories
+  file: path=/opt/mutalyzer/{{ item }}
+        owner=mutalyzer
+        group=mutalyzer
+        state=directory
+  with_items:
+    - ''
+    - bin
+    - cache
+    - log
+    - versions
+    - src
+
+- name: checkout mutalyzer git repository
+  git: repo={{ mutalyzer_git_repository }}
+       dest=/opt/mutalyzer/src/mutalyzer
+       version={{ mutalyzer_git_branch }}
+       update=yes
+  sudo_user: mutalyzer
+  register: mutalyzer_code
+
+- name: install limit-directory-size script
+  copy: src=limit-directory-size.bash
+        dest=/opt/mutalyzer/bin/limit-directory-size.bash
+        mode=755
+  sudo_user: mutalyzer
+  notify: restart mutalyzer limit cache size
+
+- name: add mutalyzer limit cache size systemd service
+  template: src=limit-cache-size.service
+            dest=/etc/systemd/system/mutalyzer-limit-cache-size.service
+
+- name: start mutalyzer limit cache size
+  service: name=mutalyzer-limit-cache-size state=started enabled=yes
+
+- name: copy ssl certificate
+  copy: src={{ mutalyzer_certificate}}
+        dest=/etc/ssl/certs/mutalyzer.crt
+  notify: reload nginx
+
+- name: copy ssl certificate key
+  copy: src={{ mutalyzer_certificate_key }}
+        dest=/etc/ssl/private/mutalyzer.key
+        owner=root
+        group=root
+        mode=0600
+  notify: reload nginx

@@ -1,0 +1,6 @@
+---
+- name: deploy mutalyzer
+  hosts: mutalyzer
+  gather_facts: no
+  sudo: yes
+  roles: [exim, mutalyzer]

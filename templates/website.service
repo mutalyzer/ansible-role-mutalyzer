@@ -1,0 +1,17 @@
+[Unit]
+Description=Mutalyzer website ({{ mutalyzer_current }})
+After=network.target
+
+[Service]
+ExecStart=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv/bin/gunicorn --pid /opt/mutalyzer/versions/{{ mutalyzer_current }}/run/website.pid -c /opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/website.conf mutalyzer.entrypoints.website
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PIDFile=/opt/mutalyzer/versions/{{ mutalyzer_current }}/run/website.pid
+WorkingDirectory=/opt/mutalyzer/versions/{{ mutalyzer_current }}
+Environment=MUTALYZER_SETTINGS=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/settings.py
+User=mutalyzer
+Group=mutalyzer
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

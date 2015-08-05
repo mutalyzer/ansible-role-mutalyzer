@@ -1,0 +1,12 @@
+[submodule ".roles/redis"]
+	path = .roles/redis
+	url = https://git.lumc.nl/humgen-devops/ansible-role-redis.git
+[submodule ".roles/nginx"]
+	path = .roles/nginx
+	url = https://git.lumc.nl/humgen-devops/ansible-role-nginx.git
+[submodule ".roles/exim"]
+	path = .roles/exim
+	url = https://git.lumc.nl/humgen-devops/ansible-role-exim.git
+[submodule ".roles/postgresql"]
+	path = .roles/postgresql
+	url = https://git.lumc.nl/humgen-devops/ansible-role-postgresql.git

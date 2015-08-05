@@ -1,0 +1,28 @@
+---
+mutalyzer_server_name: localhost
+
+mutalyzer_website_proxy_read_timeout: 60
+mutalyzer_website_worker_class: sync
+mutalyzer_website_workers: 2
+mutalyzer_website_timeout: 30
+
+mutalyzer_service_json_proxy_read_timeout: 60
+mutalyzer_service_json_worker_class: sync
+mutalyzer_service_json_workers: 1
+mutalyzer_service_json_timeout: 30
+
+mutalyzer_service_soap_proxy_read_timeout: 60
+mutalyzer_service_soap_worker_class: sync
+mutalyzer_service_soap_workers: 1
+mutalyzer_service_soap_timeout: 30
+
+mutalyzer_max_cache_size: 52428800  # 50 MB
+mutalyzer_extractor_max_input_length: 50000  # 50 Kbp
+mutalyzer_remote_caches: []
+mutalyzer_piwik: null
+
+mutalyzer_prune_versions: true
+mutalyzer_unit_tests: false
+
+mutalyzer_git_repository: https://github.com/mutalyzer/mutalyzer.git
+mutalyzer_git_branch: master

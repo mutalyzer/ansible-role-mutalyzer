@@ -1,0 +1,4 @@
+---
+mutalyzer_certificate: "{{ inventory_dir }}/certificates/mutalyzer.crt"
+mutalyzer_certificate_key: "{{ inventory_dir }}/certificates/mutalyzer.key"
+mutalyzer_database_password: dummy_password_for_tests

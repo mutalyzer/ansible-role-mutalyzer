@@ -1,0 +1,30 @@
+---
+- name: remove old version directories
+  file: path=/opt/mutalyzer/versions/{{ item }} state=absent
+  with_items: mutalyzer_versions
+  when: item != mutalyzer_current
+
+- name: remove old nginx configuration for mutalyzer
+  file: path=/etc/nginx/sites-available/mutalyzer-{{ item }} state=absent
+  with_items: mutalyzer_versions
+  when: item != mutalyzer_current
+
+- name: remove old mutalyzer website systemd service
+  file: path=/etc/systemd/system/mutalyzer-website-{{ item }}.service state=absent
+  with_items: mutalyzer_versions
+  when: item != mutalyzer_current
+
+- name: remove old mutalyzer website json service service
+  file: path=/etc/systemd/system/mutalyzer-service-json-{{ item }}.service state=absent
+  with_items: mutalyzer_versions
+  when: item != mutalyzer_current
+
+- name: remove old mutalyzer website soap service service
+  file: path=/etc/systemd/system/mutalyzer-service-soap-{{ item }}.service state=absent
+  with_items: mutalyzer_versions
+  when: item != mutalyzer_current
+
+- name: remove old mutalyzer batch processor systemd service
+  file: path=/etc/systemd/system/mutalyzer-batch-processor-{{ item }}.service state=absent
+  with_items: mutalyzer_versions
+  when: item != mutalyzer_current

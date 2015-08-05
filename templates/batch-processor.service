@@ -1,0 +1,14 @@
+[Unit]
+Description=Mutalyzer batch processor ({{ mutalyzer_current }})
+After=network.target
+
+[Service]
+ExecStart=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv/bin/mutalyzer-batch-processor
+WorkingDirectory=/opt/mutalyzer/versions/{{ mutalyzer_current }}
+Environment=MUTALYZER_SETTINGS=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/settings.py
+User=mutalyzer
+Group=mutalyzer
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

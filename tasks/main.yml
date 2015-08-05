@@ -1,0 +1,7 @@
+---
+- include: environment.yml
+
+- include: versions.yml
+
+- include: prune-versions.yml
+  when: mutalyzer_prune_versions

@@ -1,0 +1,17 @@
+[Unit]
+Description=Mutalyzer JSON service ({{ mutalyzer_current }})
+After=network.target
+
+[Service]
+ExecStart=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv/bin/gunicorn --pid /opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-json.pid -c /opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/service-json.conf mutalyzer.entrypoints.service_json
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PIDFile=/opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-json.pid
+WorkingDirectory=/opt/mutalyzer/versions/{{ mutalyzer_current }}
+Environment=MUTALYZER_SETTINGS=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/settings.py
+User=mutalyzer
+Group=mutalyzer
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

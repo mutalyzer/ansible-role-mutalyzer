@@ -1,0 +1,251 @@
+---
+- name: get original version
+  shell: 'basename $(readlink /opt/mutalyzer/versions/.current)'
+  ignore_errors: yes
+  changed_when: false
+  register: mutalyzer_original_command
+
+- name: store original version
+  set_fact: mutalyzer_original={{ mutalyzer_original_command.stdout }}
+
+- name: get current version
+  command: git rev-parse --short HEAD chdir=/opt/mutalyzer/src/mutalyzer
+  changed_when: false
+  register: mutalyzer_current_command
+
+- name: store current version
+  set_fact: mutalyzer_current={{ mutalyzer_current_command.stdout }}
+
+- name: create version directories
+  file: path=/opt/mutalyzer/versions/{{ mutalyzer_current }}/{{ item }}
+        owner=mutalyzer
+        group=mutalyzer
+        state=directory
+  with_items:
+    - ''
+    - conf
+    - log
+    - run
+
+- name: get all versions
+  shell: 'ls /opt/mutalyzer/versions | sort | cat'
+  changed_when: false
+  register: mutalyzer_versions_command
+
+- name: store all versions
+  set_fact:
+    mutalyzer_versions: "{{ mutalyzer_versions_command.stdout_lines }}"
+
+- name: copy mutalyzer website static files
+  command: "rsync -qa /opt/mutalyzer/src/mutalyzer/mutalyzer/website/templates/static/ /opt/mutalyzer/versions/{{ mutalyzer_current }}/static"
+  changed_when: false
+
+- name: configure mutalyzer
+  template: src=settings.py
+            dest=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/settings.py
+            owner=mutalyzer
+            group=mutalyzer
+  notify:
+    - reload mutalyzer website
+    - reload mutalyzer json service
+    - reload mutalyzer soap service
+    - restart mutalyzer batch processor
+
+- name: configure mutalyzer website
+  template: src=website.conf
+            dest=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/website.conf
+            owner=mutalyzer
+            group=mutalyzer
+  notify: reload mutalyzer website
+
+- name: configure mutalyzer json service
+  template: src=service-json.conf
+            dest=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/service-json.conf
+            owner=mutalyzer
+            group=mutalyzer
+  notify: reload mutalyzer json service
+
+- name: configure mutalyzer soap service
+  template: src=service-soap.conf
+            dest=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/service-soap.conf
+            owner=mutalyzer
+            group=mutalyzer
+  notify: reload mutalyzer soap service
+
+- name: configure nginx for mutalyzer
+  template: src=nginx.conf
+            dest=/etc/nginx/sites-available/mutalyzer-{{ mutalyzer_current }}
+  notify: reload nginx
+
+- name: add mutalyzer website systemd service
+  template: src=website.service
+            dest=/etc/systemd/system/mutalyzer-website-{{ mutalyzer_current }}.service
+
+- name: add mutalyzer json service systemd service
+  template: src=service-json.service
+            dest=/etc/systemd/system/mutalyzer-service-json-{{ mutalyzer_current }}.service
+
+- name: add mutalyzer soap service systemd service
+  template: src=service-soap.service
+            dest=/etc/systemd/system/mutalyzer-service-soap-{{ mutalyzer_current }}.service
+
+- name: add mutalyzer batch processor systemd service
+  template: src=batch-processor.service
+            dest=/etc/systemd/system/mutalyzer-batch-processor-{{ mutalyzer_current }}.service
+
+- name: install python ipython package
+  pip: name=ipython
+       virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
+       state=present
+  sudo_user: mutalyzer
+
+- name: install python psycopg2 package
+  pip: name=psycopg2
+       version=2.5.3
+       virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
+       state=present
+  sudo_user: mutalyzer
+
+- name: install python gunicorn package
+  pip: name=gunicorn
+       version=19.3.0
+       virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
+       state=present
+  sudo_user: mutalyzer
+
+- name: install python eventlet package
+  pip: name=eventlet
+       version=0.17.4
+       virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
+       state=present
+  sudo_user: mutalyzer
+  when: '"eventlet" in (mutalyzer_website_worker_class,
+                        mutalyzer_service_json_worker_class,
+                        mutalyzer_service_soap_worker_class)'
+
+- name: install python gevent package
+  pip: name=gevent
+       version=1.0.2
+       virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
+       state=present
+  sudo_user: mutalyzer
+  when: '"gevent" in (mutalyzer_website_worker_class,
+                      mutalyzer_service_json_worker_class,
+                      mutalyzer_service_soap_worker_class)'
+
+- include: install-version.yml
+  # In theory this should be safe to always run, but in practice we'd rather
+  # not hot-update the current version.
+  # Only a git repository update can make these tasks change anything, so we
+  # can limit them to that situation.
+  when: mutalyzer_current != mutalyzer_original
+
+- name: start mutalyzer website
+  service: name=mutalyzer-website-{{ mutalyzer_current }} state=started enabled=yes
+
+- name: wait for mutalyzer website to be available
+  wait_for: path=/opt/mutalyzer/versions/{{ mutalyzer_current }}/run/website.sock state=present timeout=60
+
+- name: test mutalyzer website
+  shell: "/bin/echo -e 'GET / HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_current }}/run/website.sock"
+  changed_when: false
+  register: mutalyzer_test_website_command
+
+- fail: msg='testing mutalyzer website failed'
+  when: '"Welcome" not in mutalyzer_test_website_command.stdout'
+
+- name: start mutalyzer json service
+  service: name=mutalyzer-service-json-{{ mutalyzer_current }} state=started enabled=yes
+
+- name: wait for mutalyzer json service to be available
+  wait_for: path=/opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-json.sock state=present timeout=60
+
+- name: test mutalyzer json service
+  shell: "/bin/echo -e 'GET /json/info HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-json.sock"
+  changed_when: false
+  register: mutalyzer_test_service_json_command
+
+- fail: msg='testing mutalyzer json service failed'
+  when: '"version" not in mutalyzer_test_service_json_command.stdout'
+
+- name: start mutalyzer soap service
+  service: name=mutalyzer-service-soap-{{ mutalyzer_current }} state=started enabled=yes
+
+- name: wait for mutalyzer soap service to be available
+  wait_for: path=/opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-soap.sock state=present timeout=60
+
+- name: test mutalyzer soap service
+  shell: "/bin/echo -e 'GET /services/?wsdl HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-soap.sock"
+  changed_when: false
+  register: mutalyzer_test_service_soap_command
+
+- fail: msg='testing mutalyzer soap service failed'
+  when: '"targetNamespace" not in mutalyzer_test_service_soap_command.stdout'
+
+- name: stop and disable old mutalyzer batch processors
+  service: name=mutalyzer-batch-processor-{{ item }} state=stopped enabled=no
+  with_items: mutalyzer_versions
+  when: item != mutalyzer_current
+
+- name: start mutalyzer batch processor
+  service: name=mutalyzer-batch-processor-{{ mutalyzer_current }} state=started enabled=yes
+
+- name: save current version
+  file: path=/opt/mutalyzer/versions/.current
+        src=/opt/mutalyzer/versions/{{ mutalyzer_current }}
+        state=link
+
+- name: add cache sync cronjobs
+  cron: name="mutalyzer cache sync (remote {{ item.name }})"
+        cron_file=mutalyzer-cache-sync-{{ item.name }}
+        job="MUTALYZER_SETTINGS=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/settings.py /opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv/bin/mutalyzer-admin sync-cache '{{ item.wsdl }}' '{{ item.url_template }}' -H 3 2>> /opt/mutalyzer/log/cache-sync-{{ item.name }}.stderr >> /opt/mutalyzer/log/cache-sync-{{ item.name }}.stdout"
+        user=mutalyzer
+        special_time=daily
+        state=present
+  with_items: mutalyzer_remote_caches
+
+- name: enable nginx configuration for mutalyzer
+  file: path=/etc/nginx/sites-enabled/mutalyzer
+        src=/etc/nginx/sites-available/mutalyzer-{{ mutalyzer_current }}
+        state=link
+
+- name: reload nginx
+  service: name=nginx state=reloaded
+  when: mutalyzer_current != mutalyzer_original
+
+# Gunicorn will finish current requests, but there may also be requests
+# pending (forwarded by nginx but not yet handled by Gunicorn), especially
+# with (a low number of) sync workers. These will not magically be
+# redirected to the new Gunicorn instance.
+# We append a request to the pending queue, so when it is handled we know the
+# old Gunicorn instance can safely be stopped.
+
+- name: wait for pending requests on old website
+  shell: "/bin/echo -e 'GET / HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_original }}/run/website.sock"
+  changed_when: false
+  when: mutalyzer_original and mutalyzer_current != mutalyzer_original
+
+- name: stop and disable old mutalyzer websites
+  service: name=mutalyzer-website-{{ item }} state=stopped enabled=no
+  with_items: mutalyzer_versions
+  when: item != mutalyzer_current
+
+- name: wait for pending requests on old json service
+  shell: "/bin/echo -e 'GET /json/ HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_original }}/run/service-json.sock"
+  changed_when: false
+  when: mutalyzer_original and mutalyzer_current != mutalyzer_original
+
+- name: stop and disable old mutalyzer json services
+  service: name=mutalyzer-service-json-{{ item }} state=stopped enabled=no
+  with_items: mutalyzer_versions
+  when: item != mutalyzer_current
+
+- name: wait for pending requests on old soap service
+  shell: "/bin/echo -e 'GET /services/ HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_original }}/run/service-soap.sock"
+  changed_when: false
+  when: mutalyzer_original and mutalyzer_current != mutalyzer_original
+
+- name: stop and disable old mutalyzer soap services
+  service: name=mutalyzer-service-soap-{{ item }} state=stopped enabled=no
+  with_items: mutalyzer_versions
+  when: item != mutalyzer_current
