@@ -1,5 +1,7 @@
 ---
 mutalyzer_server_name: localhost
+mutalyzer_certificate: localhost-insecure.crt
+mutalyzer_certificate_key: localhost-insecure.key
 
 mutalyzer_website_proxy_read_timeout: 60
 mutalyzer_website_worker_class: sync
@@ -16,6 +18,7 @@ mutalyzer_service_soap_worker_class: sync
 mutalyzer_service_soap_workers: 1
 mutalyzer_service_soap_timeout: 30
 
+mutalyzer_database_password: insecure_password
 mutalyzer_max_cache_size: 52428800  # 50 MB
 mutalyzer_extractor_max_input_length: 50000  # 50 Kbp
 mutalyzer_remote_caches: []

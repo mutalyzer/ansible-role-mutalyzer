@@ -143,15 +143,21 @@ Variables
 
 Also see variables of dependencies.
 
-### `mutalyzer_certificate` (required)
+### `mutalyzer_certificate`
+
+Default: `localhost-insecure.crt` (self-signed certificate for `localhost`)
 
 SSL certificate file.
 
-### `mutalyzer_certificate_key` (required)
+### `mutalyzer_certificate_key`
+
+Default: `localhost-insecure.key`
 
 SSL certificate keyfile.
 
-### `mutalyzer_database_password` (required)
+### `mutalyzer_database_password`
+
+Default: `insecure_password`
 
 Password for the PostgreSQL database user.
 
