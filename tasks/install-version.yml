@@ -17,9 +17,6 @@
   sudo_user: mutalyzer
   when: mutalyzer_unit_tests
 
-# Todo: There might be a bug here. When a migration introduces a new database
-# table, I think it is created by `mutalyzer-admin setup-database` and the
-# actual migration might fail? Need to test this.
 - name: setup mutalyzer database
   shell: "MUTALYZER_SETTINGS=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/settings.py /opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv/bin/mutalyzer-admin setup-database --alembic-config /opt/mutalyzer/src/mutalyzer/migrations/alembic.ini"
   sudo_user: mutalyzer
