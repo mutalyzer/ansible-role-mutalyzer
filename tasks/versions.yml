@@ -147,7 +147,7 @@
   wait_for: path=/opt/mutalyzer/versions/{{ mutalyzer_current }}/run/website.sock state=present timeout=60
 
 - name: test mutalyzer website
-  shell: "/bin/echo -e 'GET / HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_current }}/run/website.sock"
+  shell: "/bin/echo -n -e 'GET / HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_current }}/run/website.sock"
   changed_when: false
   register: mutalyzer_test_website_command
 
@@ -161,7 +161,7 @@
   wait_for: path=/opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-json.sock state=present timeout=60
 
 - name: test mutalyzer json service
-  shell: "/bin/echo -e 'GET /json/info HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-json.sock"
+  shell: "/bin/echo -n -e 'GET /json/info HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-json.sock"
   changed_when: false
   register: mutalyzer_test_service_json_command
 
@@ -175,7 +175,7 @@
   wait_for: path=/opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-soap.sock state=present timeout=60
 
 - name: test mutalyzer soap service
-  shell: "/bin/echo -e 'GET /services/?wsdl HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-soap.sock"
+  shell: "/bin/echo -n -e 'GET /services/?wsdl HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-soap.sock"
   changed_when: false
   register: mutalyzer_test_service_soap_command
 
@@ -221,7 +221,7 @@
 # old Gunicorn instance can safely be stopped.
 
 - name: wait for pending requests on old website
-  shell: "/bin/echo -e 'GET / HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_original }}/run/website.sock"
+  shell: "/bin/echo -n -e 'GET / HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_original }}/run/website.sock"
   changed_when: false
   when: mutalyzer_original and mutalyzer_current != mutalyzer_original
 
@@ -231,7 +231,7 @@
   when: item != mutalyzer_current
 
 - name: wait for pending requests on old json service
-  shell: "/bin/echo -e 'GET /json/ HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_original }}/run/service-json.sock"
+  shell: "/bin/echo -n -e 'GET /json/ HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_original }}/run/service-json.sock"
   changed_when: false
   when: mutalyzer_original and mutalyzer_current != mutalyzer_original
 
@@ -241,7 +241,7 @@
   when: item != mutalyzer_current
 
 - name: wait for pending requests on old soap service
-  shell: "/bin/echo -e 'GET /services/ HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_original }}/run/service-soap.sock"
+  shell: "/bin/echo -n -e 'GET /services/ HTTP/1.0\\r\nHost: {{ mutalyzer_server_name }}\\r\n\\r\n' | nc -U /opt/mutalyzer/versions/{{ mutalyzer_original }}/run/service-soap.sock"
   changed_when: false
   when: mutalyzer_original and mutalyzer_current != mutalyzer_original
 
