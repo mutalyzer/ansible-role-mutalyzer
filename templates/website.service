@@ -12,6 +12,7 @@ Environment=MUTALYZER_SETTINGS=/opt/mutalyzer/versions/{{ mutalyzer_current }}/c
 User=mutalyzer
 Group=mutalyzer
 Restart=always
+RestartSec=2s
 
 [Install]
 WantedBy=multi-user.target

@@ -8,6 +8,7 @@ WorkingDirectory=/opt/mutalyzer
 User=mutalyzer
 Group=mutalyzer
 Restart=always
+RestartSec=2s
 
 [Install]
 WantedBy=multi-user.target
