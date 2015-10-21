@@ -16,3 +16,4 @@ dependencies:
             privileges: ALL
   - role: redis
   - role: nginx
+  - role: mail-service-status

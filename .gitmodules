@@ -10,3 +10,6 @@
 [submodule ".roles/postgresql"]
 	path = .roles/postgresql
 	url = https://git.lumc.nl/humgen-devops/ansible-role-postgresql.git
+[submodule ".roles/mail-service-status"]
+	path = .roles/mail-service-status
+	url = https://git.lumc.nl/humgen-devops/ansible-role-mail-service-status.git

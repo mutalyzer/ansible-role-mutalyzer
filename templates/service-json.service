@@ -1,6 +1,7 @@
 [Unit]
 Description=Mutalyzer JSON service ({{ mutalyzer_current }})
 After=network.target
+OnFailure=mail-service-status@%n.service
 
 [Service]
 ExecStart=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv/bin/gunicorn --pid /opt/mutalyzer/versions/{{ mutalyzer_current }}/run/service-json.pid -c /opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/service-json.conf mutalyzer.entrypoints.service_json
@@ -11,8 +12,10 @@ WorkingDirectory=/opt/mutalyzer/versions/{{ mutalyzer_current }}
 Environment=MUTALYZER_SETTINGS=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/settings.py
 User=mutalyzer
 Group=mutalyzer
-Restart=always
-RestartSec=2s
+Restart=on-failure
+RestartSec=1s
+StartLimitInterval=20s
+StartLimitBurst=5
 
 [Install]
 WantedBy=multi-user.target

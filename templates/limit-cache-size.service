@@ -1,14 +1,17 @@
 [Unit]
 Description=Mutalyzer limit cache size
 After=network.target
+OnFailure=mail-service-status@%n.service
 
 [Service]
 ExecStart=/opt/mutalyzer/bin/limit-directory-size.bash /opt/mutalyzer/cache {{ mutalyzer_max_cache_size }}
 WorkingDirectory=/opt/mutalyzer
 User=mutalyzer
 Group=mutalyzer
-Restart=always
-RestartSec=2s
+Restart=on-failure
+RestartSec=1s
+StartLimitInterval=20s
+StartLimitBurst=5
 
 [Install]
 WantedBy=multi-user.target
