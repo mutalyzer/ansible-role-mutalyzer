@@ -93,6 +93,13 @@
   template: src=batch-processor.service
             dest=/etc/systemd/system/mutalyzer-batch-processor-{{ mutalyzer_current }}.service
 
+- name: install python pip package
+  pip: name=pip
+       version=7.1.2
+       virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
+       state=present
+  sudo_user: mutalyzer
+
 - name: install python ipython package
   pip: name=ipython
        virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
