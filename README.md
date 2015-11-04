@@ -2,6 +2,16 @@ Ansible role for Mutalyzer
 ==========================
 
 
+Table of contents
+-----------------
+
+- [Requirements](#requirements)
+- [Description](#description)
+- [Dependencies](#dependencies)
+- [Variables](#variables)
+- [Local deployment with Vagrant](#local-deployment-with-vagrant)
+
+
 Requirements
 ------------
 
