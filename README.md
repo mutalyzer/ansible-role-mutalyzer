@@ -321,4 +321,4 @@ Local deployment with Vagrant
 -----------------------------
 
 Easy deployment on a local virtual machine using Vagrant is provided in the
-`vagrant` directory.
+[vagrant](vagrant) directory.
