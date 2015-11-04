@@ -23,6 +23,8 @@ DATABASE_URI = 'postgresql://mutalyzer:{{ mutalyzer_database_password }}@localho
 
 REDIS_URI = 'redis://localhost'
 
+WEBSITE_ROOT_URL = 'https://{{ mutalyzer_server_name }}'
+
 SOAP_WSDL_URL = 'https://{{ mutalyzer_server_name }}/services/?wsdl'
 
 JSON_ROOT_URL = 'https://{{ mutalyzer_server_name }}/json'
