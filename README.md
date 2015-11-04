@@ -1,6 +1,11 @@
 Ansible role for Mutalyzer
 ==========================
 
+This role deploys the HGVS variant nomenclature checker
+[Mutalyzer](https://mutalyzer.nl/).
+
+New here? Check out [How to use the Mutalyzer Ansible role](HOWTO.md).
+
 
 Table of contents
 -----------------
