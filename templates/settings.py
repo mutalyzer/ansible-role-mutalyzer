@@ -11,6 +11,8 @@ from __future__ import unicode_literals
 
 EMAIL = 'mutalyzer@humgen.nl'
 
+BATCH_NOTIFICATION_EMAIL = '{{ mutalyzer_batch_notification_email }}'
+
 CACHE_DIR = '/opt/mutalyzer/cache'
 
 LOG_FILE = '/opt/mutalyzer/log/mutalyzer.log'

@@ -262,6 +262,12 @@ Default: 30
 
 Timeout before killing silent Gunicorn workers for the SOAP webservice.
 
+### `mutalyzer_batch_notification_email`
+
+Default: `noreply@localhost`
+
+Address used as sender in batch job notification emails.
+
 ### `mutalyzer_max_cache_size`
 
 Default: 52428800  (50 MB)
