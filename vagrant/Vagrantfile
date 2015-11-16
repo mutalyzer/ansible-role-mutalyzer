@@ -38,7 +38,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Provision using our Ansible playbook.
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "playbook.yml"
-    ansible.inventory_path = "inventory.yml"
+    ansible.inventory_path = "inventory"
     ansible.host_key_checking = false
   end
 

@@ -30,7 +30,7 @@ You can SSH into the machine with:
 
 Running Ansible manually can be done like this:
 
-    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory.yml playbook.yml
+    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory playbook.yml
 
 (Unfortunately, there seems to be no easier way to disable host key checking
 for the Vagrant host only.)

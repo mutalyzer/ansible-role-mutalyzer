@@ -4,11 +4,11 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-ansible-playbook -i inventory.yml playbook.yml --syntax-check
+ansible-playbook -i inventory playbook.yml --syntax-check
 
-ansible-playbook -i inventory.yml playbook.yml --connection=local
+ansible-playbook -i inventory playbook.yml --connection=local
 
-ansible-playbook -i inventory.yml playbook.yml --connection=local \
+ansible-playbook -i inventory playbook.yml --connection=local \
   | grep 'changed=0.*failed=0' > /dev/null \
   && (echo 'Idempotence test: pass' && exit 0) \
   || (echo 'Idempotence test: fail' && exit 1)
