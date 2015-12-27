@@ -4,7 +4,7 @@ Role tests
 Bootstrap a Debian 8 (Jessie) installation as follows:
 
     sudo apt-get install -y curl git python-pip python-dev
-    sudo pip install ansible markupsafe
+    sudo pip install ansible==1.9.2 markupsafe
     git clone https://github.com/mutalyzer/ansible-role-mutalyzer.git
     cd ansible-role-mutalyzer/
     git submodule init
