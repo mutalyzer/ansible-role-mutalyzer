@@ -14,11 +14,3 @@ Then run the tests:
 
     cd tests/
     ./run.sh
-
-
-Travis CI
----------
-
-Travis CI runs builds in a Ubuntu 12.04 environment. Because this role
-requires systemd, which is not available for Ubuntu 12.04, we cannot currently
-run these tests on Travis CI.
