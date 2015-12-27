@@ -1,0 +1,10 @@
+---
+# Travis CI runs builds in Ubuntu 12.04 or 14.04 environments for which
+# systemd is not available. Since this role depends on systemd, we run our
+# tests inside a Docker container with systemd.
+sudo: required
+services: docker
+install:
+  - "docker pull martijnvermaat/debian-ansible:v1.9.2"
+  - "docker run -dti --name ansible-role-mutalyzer --cap-add SYS_ADMIN -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v $PWD:/ansible-role-mutalyzer:ro martijnvermaat/debian-ansible:v1.9.2 /sbin/init"
+script: "docker exec -ti ansible-role-mutalyzer sh -c 'cd /ansible-role-mutalyzer/tests && ./run.sh'"
