@@ -120,6 +120,13 @@
        state=present
   sudo_user: mutalyzer
 
+- name: install python setproctitle package
+  pip: name=setproctitle
+       version=1.1.9
+       virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
+       state=present
+  sudo_user: mutalyzer
+
 - name: install python eventlet package
   pip: name=eventlet
        version=0.17.4
