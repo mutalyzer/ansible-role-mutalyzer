@@ -152,6 +152,9 @@
   # can limit them to that situation.
   when: mutalyzer_current != mutalyzer_original
 
+- include: assembly.yml
+  with_dict: "{{ mutalyzer_assemblies }}"
+
 - name: start mutalyzer website
   service: name=mutalyzer-website-{{ mutalyzer_current }} state=started enabled=yes
 

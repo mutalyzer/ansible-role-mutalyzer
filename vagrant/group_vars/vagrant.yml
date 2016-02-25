@@ -13,3 +13,32 @@ mutalyzer_certificate_key: "{{ inventory_dir }}/certificates/mutalyzer.key"
 mutalyzer_database_password: dummy_password_in_vagrant
 
 mutalyzer_git_branch: master
+
+mutalyzer_assemblies:
+  # Keys must match name or alias and be valid directory names.
+  hg19:
+    definition: https://raw.githubusercontent.com/mutalyzer/mutalyzer/master/extras/assemblies/GRCh37.json
+    # Import once at Ansible run, recognize need by stored file.
+    mappings:
+      - type: mapview
+        url: ftp://ftp.ncbi.nlm.nih.gov/genomes/MapView/Homo_sapiens/sequence/ANNOTATION_RELEASE.105/initial_release/seq_gene.md.gz
+        group_label: GRCh37.p13-Primary Assembly
+        # - Do this once at Ansible run, recognize need by stored file.
+        # - How to name the file?
+        # - Doesn't this take too long during Ansible run?
+        # - Do this every X, from cron
+        schedule: no
+      - type: reference
+        accession: NC_012920.1
+        # Do this every X, from cron, don't store anything.
+      - type: lrgmap
+        url: ftp://ftp.ebi.ac.uk/pub/databases/lrgex/list_LRGs_transcripts_GRCh37.txt
+        # Do this every X, from cron, don't store anything.
+      - type: gene
+        symbol: TP53
+        # Do this every X, from cron, don't store anything.
+
+
+# TODO: Filter on group label before importing (e.g., using AWK). For
+# backwards compatibility we could make the argument optional for the import
+# command.

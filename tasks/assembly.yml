@@ -1,0 +1,38 @@
+---
+- set_fact:
+    mutalyzer_assembly: "{{ item.value }}"
+    mutalyzer_assembly_key: "{{ item.key }}"
+
+- name: create assembly directory
+  file: path=/opt/mutalyzer/assemblies/{{ mutalyzer_assembly_key }}
+        owner=mutalyzer
+        group=mutalyzer
+        state=directory
+
+- name: download assembly definition
+  get_url:
+    url: "{{ mutalyzer_assembly.definition }}"
+    dest: /opt/mutalyzer/assemblies/{{ mutalyzer_assembly_key }}/definition.json
+  register: mutalyzer_assembly_download
+  sudo_user: mutalyzer
+
+- name: add assembly
+  shell: "MUTALYZER_SETTINGS=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/settings.py /opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv/bin/mutalyzer-admin assemblies add /opt/mutalyzer/assemblies/{{ mutalyzer_assembly_key }}/definition.json"
+  when: mutalyzer_assembly_download.changed
+  sudo_user: mutalyzer
+
+- name: create import mappings scripts
+  template:
+    src: "{{ item.1.type }}.bash"
+    dest: /opt/mutalyzer/assemblies/{{ mutalyzer_assembly_key }}/import-mappings-{{ item.0 }}.sh
+  with_indexed_items: "{{ mutalyzer_assembly.mappings }}"
+
+- name: create import mappings cron jobs
+  cron: blaat
+  when: item.1.schedule
+  with_indexed_items: "{{ mutalyzer_assembly.mappings }}"
+
+- name: import mappings
+  command: blaat
+  when: item.1.now
+  with_indexed_items: "{{ mutalyzer_assembly.mappings }}"
