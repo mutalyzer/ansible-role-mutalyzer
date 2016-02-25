@@ -19,7 +19,7 @@ directory.
 Install Ansible
 ---------------
 
-We need Ansible 1.9.2 or higher.
+We need Ansible 2.0.1 or higher.
 
     pip install ansible
 
@@ -59,7 +59,7 @@ Create a file `playbook.yml` with contents like the following:
 ---
 - name: deploy mutalyzer
   hosts: mutalyzer
-  sudo: yes
+  become: yes
   roles: [exim, mutalyzer]
   pre_tasks:
   - name: update apt cache
@@ -74,7 +74,7 @@ An inventory file is where you define your infrastructure for Ansible. In this
 case, we have just one machine which we call `mutalyzer`. In the inventory, we
 define its IP address and the user to login as:
 
-    mutalyzer ansible_ssh_host=MUTALYZER_IP ansible_ssh_user=MUTALYZER_USER
+    mutalyzer ansible_host=MUTALYZER_IP ansible_user=MUTALYZER_USER
 
 Save this file as `inventory`.
 

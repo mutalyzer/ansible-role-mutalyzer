@@ -21,7 +21,7 @@ Requirements
 ------------
 
 - Debian 8 (Jessie) with a configured MTA
-- Ansible version 1.9.2
+- Ansible version 2.0.1
 
 
 Description

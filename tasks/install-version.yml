@@ -3,24 +3,24 @@
   pip: requirements=/opt/mutalyzer/src/mutalyzer/requirements.txt
        virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
        state=present
-  sudo_user: mutalyzer
+  become_user: mutalyzer
 
 - name: install mutalyzer
   pip: name=/opt/mutalyzer/src/mutalyzer
        virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
        state=latest
-  sudo_user: mutalyzer
+  become_user: mutalyzer
 
 - name: run unit tests
   command: /opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv/bin/py.test /opt/mutalyzer/src/mutalyzer/tests
   changed_when: false
-  sudo_user: mutalyzer
+  become_user: mutalyzer
   when: mutalyzer_unit_tests
 
 - name: setup mutalyzer database
   shell: "MUTALYZER_SETTINGS=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/settings.py /opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv/bin/mutalyzer-admin setup-database --alembic-config /opt/mutalyzer/src/mutalyzer/migrations/alembic.ini"
-  sudo_user: mutalyzer
+  become_user: mutalyzer
 
 - name: migrate mutalyzer database
   shell: "MUTALYZER_SETTINGS=/opt/mutalyzer/versions/{{ mutalyzer_current }}/conf/settings.py /opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv/bin/alembic -c /opt/mutalyzer/src/mutalyzer/migrations/alembic.ini upgrade head"
-  sudo_user: mutalyzer
+  become_user: mutalyzer
