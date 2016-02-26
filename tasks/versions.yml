@@ -8,13 +8,8 @@
 - name: store original version
   set_fact: mutalyzer_original={{ mutalyzer_original_command.stdout }}
 
-- name: get current version
-  command: git rev-parse --short HEAD chdir=/opt/mutalyzer/src/mutalyzer
-  changed_when: false
-  register: mutalyzer_current_command
-
 - name: store current version
-  set_fact: mutalyzer_current={{ mutalyzer_current_command.stdout }}
+  set_fact: mutalyzer_current={{ mutalyzer_git_result.after[:7] }}
 
 - name: create version directories
   file: path=/opt/mutalyzer/versions/{{ mutalyzer_current }}/{{ item }}
@@ -37,8 +32,11 @@
     mutalyzer_versions: "{{ mutalyzer_versions_command.stdout_lines }}"
 
 - name: copy mutalyzer website static files
-  command: "rsync -qa /opt/mutalyzer/src/mutalyzer/mutalyzer/website/templates/static/ /opt/mutalyzer/versions/{{ mutalyzer_current }}/static"
-  changed_when: false
+  command: "rsync -ai --delete /opt/mutalyzer/src/mutalyzer/mutalyzer/website/templates/static/ /opt/mutalyzer/versions/{{ mutalyzer_current }}/static"
+  args:
+    warn: no
+  register: mutalyzer_website_static_rsync
+  changed_when: mutalyzer_website_static_rsync.stdout
 
 - name: configure mutalyzer
   template: src=settings.py
@@ -98,41 +96,41 @@
        version=7.1.2
        virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
        state=present
-  sudo_user: mutalyzer
+  become_user: mutalyzer
 
 - name: install python ipython package
   pip: name=ipython
        virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
        state=present
-  sudo_user: mutalyzer
+  become_user: mutalyzer
 
 - name: install python psycopg2 package
   pip: name=psycopg2
        version=2.5.3
        virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
        state=present
-  sudo_user: mutalyzer
+  become_user: mutalyzer
 
 - name: install python gunicorn package
   pip: name=gunicorn
        version=19.3.0
        virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
        state=present
-  sudo_user: mutalyzer
+  become_user: mutalyzer
 
 - name: install python setproctitle package
   pip: name=setproctitle
        version=1.1.9
        virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
        state=present
-  sudo_user: mutalyzer
+  become_user: mutalyzer
 
 - name: install python eventlet package
   pip: name=eventlet
        version=0.17.4
        virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
        state=present
-  sudo_user: mutalyzer
+  become_user: mutalyzer
   when: '"eventlet" in (mutalyzer_website_worker_class,
                         mutalyzer_service_json_worker_class,
                         mutalyzer_service_soap_worker_class)'
@@ -142,7 +140,7 @@
        version=1.0.2
        virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
        state=present
-  sudo_user: mutalyzer
+  become_user: mutalyzer
   when: '"gevent" in (mutalyzer_website_worker_class,
                       mutalyzer_service_json_worker_class,
                       mutalyzer_service_soap_worker_class)'
@@ -198,7 +196,7 @@
 
 - name: stop and disable old mutalyzer batch processors
   service: name=mutalyzer-batch-processor-{{ item }} state=stopped enabled=no
-  with_items: mutalyzer_versions
+  with_items: "{{ mutalyzer_versions }}"
   when: item != mutalyzer_current
 
 - name: start mutalyzer batch processor
@@ -216,7 +214,7 @@
         user=mutalyzer
         special_time=daily
         state=present
-  with_items: mutalyzer_remote_caches
+  with_items: "{{ mutalyzer_remote_caches }}"
 
 - name: enable nginx configuration for mutalyzer
   file: path=/etc/nginx/sites-enabled/mutalyzer
@@ -241,7 +239,7 @@
 
 - name: stop and disable old mutalyzer websites
   service: name=mutalyzer-website-{{ item }} state=stopped enabled=no
-  with_items: mutalyzer_versions
+  with_items: "{{ mutalyzer_versions }}"
   when: item != mutalyzer_current
 
 - name: wait for pending requests on old json service
@@ -251,7 +249,7 @@
 
 - name: stop and disable old mutalyzer json services
   service: name=mutalyzer-service-json-{{ item }} state=stopped enabled=no
-  with_items: mutalyzer_versions
+  with_items: "{{ mutalyzer_versions }}"
   when: item != mutalyzer_current
 
 - name: wait for pending requests on old soap service
@@ -261,5 +259,5 @@
 
 - name: stop and disable old mutalyzer soap services
   service: name=mutalyzer-service-soap-{{ item }} state=stopped enabled=no
-  with_items: mutalyzer_versions
+  with_items: "{{ mutalyzer_versions }}"
   when: item != mutalyzer_current

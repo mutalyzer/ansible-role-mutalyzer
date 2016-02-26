@@ -5,6 +5,6 @@
 sudo: required
 services: docker
 install:
-  - "docker pull martijnvermaat/debian-ansible:v1.9.2"
-  - "docker run -dti --name ansible-role-mutalyzer --cap-add SYS_ADMIN -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v $PWD:/ansible-role-mutalyzer:ro martijnvermaat/debian-ansible:v1.9.2 /sbin/init"
+  - "docker pull martijnvermaat/debian-ansible:v2.0.1"
+  - "docker run -dti --name ansible-role-mutalyzer --cap-add SYS_ADMIN -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v $PWD:/ansible-role-mutalyzer:ro martijnvermaat/debian-ansible:v2.0.1 /sbin/init"
 script: "docker exec -ti ansible-role-mutalyzer sh -c 'cd /ansible-role-mutalyzer/tests && ./run.sh'"

@@ -46,14 +46,14 @@
        dest=/opt/mutalyzer/src/mutalyzer
        version={{ mutalyzer_git_branch }}
        update=yes
-  sudo_user: mutalyzer
-  register: mutalyzer_code
+  become_user: mutalyzer
+  register: mutalyzer_git_result
 
 - name: install limit-directory-size script
   copy: src=limit-directory-size.bash
         dest=/opt/mutalyzer/bin/limit-directory-size.bash
         mode=755
-  sudo_user: mutalyzer
+  become_user: mutalyzer
   notify: restart mutalyzer limit cache size
 
 - name: add mutalyzer limit cache size systemd service

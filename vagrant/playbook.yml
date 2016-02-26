@@ -2,7 +2,7 @@
 - name: deploy mutalyzer
   hosts: mutalyzer
   gather_facts: no
-  sudo: yes
+  become: yes
   roles: [exim, mutalyzer]
   pre_tasks:
     - name: update apt cache

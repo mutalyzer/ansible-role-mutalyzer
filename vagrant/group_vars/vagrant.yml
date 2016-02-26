@@ -1,7 +1,7 @@
 ---
-ansible_ssh_host: 127.0.0.1
-ansible_ssh_port: "{{ lookup('env', 'MUTALYZER_PORT_FORWARD_SSH') | default(2522, true) }}"
-ansible_ssh_user: vagrant
+ansible_host: 127.0.0.1
+ansible_port: "{{ lookup('env', 'MUTALYZER_PORT_FORWARD_SSH') | default(2522, true) }}"
+ansible_user: vagrant
 ansible_ssh_private_key_file: ~/.vagrant.d/insecure_private_key
 
 exim_mailname: mutalyzer.local
