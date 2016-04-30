@@ -123,26 +123,29 @@ Dependencies
 
 This role depends on the following roles:
 
-### `postgresql`
+### `postgresql` (optional)
 
 https://git.lumc.nl/humgen-devops/ansible-role-postgresql
 
 Variable overrides:
 
     postgresql_databases:
-      - name: mutalyzer
+      - name: "{{ mutalyzer_database_name }}"
         encoding: UTF8
         lc_collate: 'en_US.UTF-8'
         lc_ctype: 'en_US.UTF-8'
         backup: true
 
     postgresql_users:
-      - name: mutalyzer
+      - name: "{{ mutalyzer_database_user }}"
         password: "{{ mutalyzer_database_password }}"
         attributes: NOSUPERUSER,NOCREATEDB
-        database_privileges:
-          - database: mutalyzer
+        databases:
+          - name: "{{ mutalyzer_database_name }}"
             privileges: ALL
+
+This role is only needed when the `mutalyzer_database_local` variable is
+`true` (default).
 
 ### `redis`
 
@@ -174,11 +177,39 @@ Default: `localhost-insecure.key`
 
 SSL certificate keyfile.
 
+### `mutalyzer_database_local`
+
+Default `true`
+
+Whether or not the database server is local.
+
+If `true`, the database is managed by this role. If `false`, the database
+server should be up when applying this role.
+
+### `mutalyzer_database_host`
+
+Default: `localhost`
+
+Database host. If `mutalyzer_database_local` is `true`, this should be
+`localhost`.
+
+### `mutalyzer_database_name`
+
+Default: `mutalyzer`
+
+Database name.
+
+### `mutalyzer_database_user`
+
+Default: `mutalyzer`
+
+Database user.
+
 ### `mutalyzer_database_password`
 
 Default: `insecure_password`
 
-Password for the PostgreSQL database user.
+Password for the database user.
 
 ### `mutalyzer_server_name`
 
