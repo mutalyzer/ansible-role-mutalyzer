@@ -1,6 +1,7 @@
 ---
 dependencies:
   - role: postgresql
+    postgresql_port: "{{ mutalyzer_database_port }}"
     postgresql_databases:
       - name: "{{ mutalyzer_database_name }}"
         encoding: UTF8

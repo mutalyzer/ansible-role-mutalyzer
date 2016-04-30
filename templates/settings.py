@@ -21,7 +21,7 @@ EXTRACTOR_MAX_INPUT_LENGTH = {{ mutalyzer_extractor_max_input_length }}
 
 REVERSE_PROXIED = True
 
-DATABASE_URI = 'postgresql://{{ mutalyzer_database_user }}:{{ mutalyzer_database_password }}@{{ mutalyzer_database_host }}/{{ mutalyzer_database_name }}'
+DATABASE_URI = 'postgresql://{{ mutalyzer_database_user }}:{{ mutalyzer_database_password }}@{{ mutalyzer_database_host }}:{{ mutalyzer_database_port }}/{{ mutalyzer_database_name }}'
 
 REDIS_URI = 'redis://localhost'
 

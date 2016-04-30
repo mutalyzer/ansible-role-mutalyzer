@@ -129,6 +129,8 @@ https://git.lumc.nl/humgen-devops/ansible-role-postgresql
 
 Variable overrides:
 
+    postgresql_port: "{{ mutalyzer_database_port }}"
+
     postgresql_databases:
       - name: "{{ mutalyzer_database_name }}"
         encoding: UTF8
@@ -192,6 +194,12 @@ Default: `localhost`
 
 Database host. If `mutalyzer_database_local` is `true`, this should be
 `localhost`.
+
+### `mutalyzer_database_port`
+
+Default: 5432
+
+Database port.
 
 ### `mutalyzer_database_name`
 

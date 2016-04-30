@@ -20,6 +20,7 @@ mutalyzer_service_soap_timeout: 30
 
 mutalyzer_database_local: true
 mutalyzer_database_host: localhost
+mutalyzer_database_port: 5432
 mutalyzer_database_name: mutalyzer
 mutalyzer_database_user: mutalyzer
 mutalyzer_database_password: insecure_password
