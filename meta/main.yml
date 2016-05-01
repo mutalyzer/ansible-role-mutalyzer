@@ -16,5 +16,6 @@ dependencies:
             privileges: ALL
     when: not mutalyzer_database_url
   - role: redis
+    when: not mutalyzer_redis_url
   - role: nginx
   - role: mail-service-status
