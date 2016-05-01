@@ -36,7 +36,7 @@ The deployment uses the following tools:
 - [Gunicorn](http://gunicorn.org/) as WSGI HTTP server.
 - [virtualenv](http://virtualenv.readthedocs.org/) for isolation of the Mutalyzer
   package and its Python dependencies.
-- [PostgreSQL](http://www.postgresql.org/) for the database.
+- [PostgreSQL](http://www.postgresql.org/) for the database (can be customized).
 - [Redis](http://redis.io/) for stat counters and other in-memory stores.
 
 Three applications are served by nginx:
@@ -146,8 +146,8 @@ Variable overrides:
           - name: "{{ mutalyzer_database_name }}"
             privileges: ALL
 
-This role is only needed when the `mutalyzer_database_local` variable is
-`true` (default).
+This role is only needed when the `mutalyzer_database_url` variable is `null`
+(default).
 
 ### `redis`
 
@@ -179,45 +179,22 @@ Default: `localhost-insecure.key`
 
 SSL certificate keyfile.
 
-### `mutalyzer_database_local`
+### `mutalyzer_database_url`
 
-Default `true`
+Default: `null`
 
-Whether or not the database server is local.
+URL to use for connecting to a database in a form accepted by SQLAlchemy (see
+[SQLAlchemy Database Urls](http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls)).
 
-If `true`, the database is managed by this role. If `false`, the database
-server should be up when applying this role.
-
-### `mutalyzer_database_host`
-
-Default: `localhost`
-
-Database host. If `mutalyzer_database_local` is `true`, this should be
-`localhost`.
-
-### `mutalyzer_database_port`
-
-Default: 5432
-
-Database port.
-
-### `mutalyzer_database_name`
-
-Default: `mutalyzer`
-
-Database name.
-
-### `mutalyzer_database_user`
-
-Default: `mutalyzer`
-
-Database user.
+If `null`, a local PostgreSQL database is used (managed by this role). If a
+database server is specified, it should be running when applying this role.
 
 ### `mutalyzer_database_password`
 
 Default: `insecure_password`
 
-Password for the database user.
+Password for the database user. Only used when `mutalyzer_database_url` is
+`null` (the password is part of the URL otherwise).
 
 ### `mutalyzer_server_name`
 

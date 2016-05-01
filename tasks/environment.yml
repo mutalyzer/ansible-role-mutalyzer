@@ -30,7 +30,7 @@
 
 - name: install libpq-dev package
   apt: pkg=libpq-dev state=present
-  when: not mutalyzer_database_local
+  when: not mutalyzer_database_url or 'postgresql' in mutalyzer_database_url
 
 - name: create the mutalyzer directories
   file: path=/opt/mutalyzer/{{ item }}
