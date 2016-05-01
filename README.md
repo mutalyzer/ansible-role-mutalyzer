@@ -37,7 +37,8 @@ The deployment uses the following tools:
 - [virtualenv](http://virtualenv.readthedocs.org/) for isolation of the Mutalyzer
   package and its Python dependencies.
 - [PostgreSQL](http://www.postgresql.org/) for the database (can be customized).
-- [Redis](http://redis.io/) for stat counters and other in-memory stores.
+- [Redis](http://redis.io/) for stat counters and other in-memory stores (can
+  be customized).
 
 Three applications are served by nginx:
 
@@ -153,6 +154,9 @@ This role is only needed when the `mutalyzer_database_url` variable is `null`
 
 https://git.lumc.nl/humgen-devops/ansible-role-redis
 
+This role is only needed when the `mutalyzer_redis_url` variable is `null`
+(default).
+
 ### `nginx`
 
 https://git.lumc.nl/humgen-devops/ansible-role-nginx
@@ -195,6 +199,17 @@ Default: `insecure_password`
 
 Password for the database user. Only used when `mutalyzer_database_url` is
 `null` (the password is part of the URL otherwise).
+
+### `mutalyzer_redis_url`
+
+Default: `null`
+
+URL to use for connecting to a Redis server in a form accepted by
+[redis-py](https://github.com/andymccurdy/redis-py) (see
+[redis-py documentation](https://github.com/andymccurdy/redis-py/blob/2.10.5/redis/client.py#L371-L389)).
+
+If `null`, a local Redis server is used (managed by this role). If another
+Redis server is specified, it should be running when applying this role.
 
 ### `mutalyzer_server_name`
 

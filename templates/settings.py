@@ -27,7 +27,11 @@ DATABASE_URI = '{{ mutalyzer_database_url }}'
 DATABASE_URI = 'postgresql://mutalyzer:{{ mutalyzer_database_password }}@localhost/mutalyzer'
 {% endif %}
 
+{% if mutalyzer_redis_url %}
+REDIS_URI = '{{ mutalyzer_redis_url }}'
+{% else %}
 REDIS_URI = 'redis://localhost'
+{% endif %}
 
 WEBSITE_ROOT_URL = 'https://{{ mutalyzer_server_name }}'
 

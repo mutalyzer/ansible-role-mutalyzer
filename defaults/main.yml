@@ -20,6 +20,7 @@ mutalyzer_service_soap_timeout: 30
 
 mutalyzer_database_url: null
 mutalyzer_database_password: insecure_password
+mutalyzer_redis_url: null
 
 mutalyzer_batch_notification_email: noreply@localhost
 mutalyzer_max_cache_size: 52428800  # 50 MB
