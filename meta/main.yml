@@ -11,9 +11,10 @@ dependencies:
       - name: mutalyzer
         password: "{{ mutalyzer_database_password }}"
         attributes: NOSUPERUSER,NOCREATEDB
-        database_privileges:
-          - database: mutalyzer
+        databases:
+          - name: mutalyzer
             privileges: ALL
+    when: not mutalyzer_database_url
   - role: redis
   - role: nginx
   - role: mail-service-status

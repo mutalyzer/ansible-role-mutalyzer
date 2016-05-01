@@ -110,6 +110,7 @@
        virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
        state=present
   become_user: mutalyzer
+  when: not mutalyzer_database_url or 'postgresql' in mutalyzer_database_url
 
 - name: install python gunicorn package
   pip: name=gunicorn

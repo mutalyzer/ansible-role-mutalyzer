@@ -36,7 +36,7 @@ The deployment uses the following tools:
 - [Gunicorn](http://gunicorn.org/) as WSGI HTTP server.
 - [virtualenv](http://virtualenv.readthedocs.org/) for isolation of the Mutalyzer
   package and its Python dependencies.
-- [PostgreSQL](http://www.postgresql.org/) for the database.
+- [PostgreSQL](http://www.postgresql.org/) for the database (can be customized).
 - [Redis](http://redis.io/) for stat counters and other in-memory stores.
 
 Three applications are served by nginx:
@@ -123,26 +123,31 @@ Dependencies
 
 This role depends on the following roles:
 
-### `postgresql`
+### `postgresql` (optional)
 
 https://git.lumc.nl/humgen-devops/ansible-role-postgresql
 
 Variable overrides:
 
+    postgresql_port: "{{ mutalyzer_database_port }}"
+
     postgresql_databases:
-      - name: mutalyzer
+      - name: "{{ mutalyzer_database_name }}"
         encoding: UTF8
         lc_collate: 'en_US.UTF-8'
         lc_ctype: 'en_US.UTF-8'
         backup: true
 
     postgresql_users:
-      - name: mutalyzer
+      - name: "{{ mutalyzer_database_user }}"
         password: "{{ mutalyzer_database_password }}"
         attributes: NOSUPERUSER,NOCREATEDB
-        database_privileges:
-          - database: mutalyzer
+        databases:
+          - name: "{{ mutalyzer_database_name }}"
             privileges: ALL
+
+This role is only needed when the `mutalyzer_database_url` variable is `null`
+(default).
 
 ### `redis`
 
@@ -174,11 +179,22 @@ Default: `localhost-insecure.key`
 
 SSL certificate keyfile.
 
+### `mutalyzer_database_url`
+
+Default: `null`
+
+URL to use for connecting to a database in a form accepted by SQLAlchemy (see
+[SQLAlchemy Database Urls](http://docs.sqlalchemy.org/en/latest/core/engines.html#database-urls)).
+
+If `null`, a local PostgreSQL database is used (managed by this role). If a
+database server is specified, it should be running when applying this role.
+
 ### `mutalyzer_database_password`
 
 Default: `insecure_password`
 
-Password for the PostgreSQL database user.
+Password for the database user. Only used when `mutalyzer_database_url` is
+`null` (the password is part of the URL otherwise).
 
 ### `mutalyzer_server_name`
 

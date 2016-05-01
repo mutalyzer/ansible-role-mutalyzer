@@ -21,7 +21,11 @@ EXTRACTOR_MAX_INPUT_LENGTH = {{ mutalyzer_extractor_max_input_length }}
 
 REVERSE_PROXIED = True
 
+{% if mutalyzer_database_url %}
+DATABASE_URI = '{{ mutalyzer_database_url }}'
+{% else %}
 DATABASE_URI = 'postgresql://mutalyzer:{{ mutalyzer_database_password }}@localhost/mutalyzer'
+{% endif %}
 
 REDIS_URI = 'redis://localhost'
 

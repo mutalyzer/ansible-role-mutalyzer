@@ -18,7 +18,9 @@ mutalyzer_service_soap_worker_class: sync
 mutalyzer_service_soap_workers: 1
 mutalyzer_service_soap_timeout: 30
 
+mutalyzer_database_url: null
 mutalyzer_database_password: insecure_password
+
 mutalyzer_batch_notification_email: noreply@localhost
 mutalyzer_max_cache_size: 52428800  # 50 MB
 mutalyzer_extractor_max_input_length: 50000  # 50 Kbp
