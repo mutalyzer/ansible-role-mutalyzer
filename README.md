@@ -130,21 +130,18 @@ https://git.lumc.nl/humgen-devops/ansible-role-postgresql
 
 Variable overrides:
 
-    postgresql_port: "{{ mutalyzer_database_port }}"
-
     postgresql_databases:
-      - name: "{{ mutalyzer_database_name }}"
+      - name: mutalyzer
         encoding: UTF8
         lc_collate: 'en_US.UTF-8'
         lc_ctype: 'en_US.UTF-8'
         backup: true
-
     postgresql_users:
-      - name: "{{ mutalyzer_database_user }}"
+      - name: mutalyzer
         password: "{{ mutalyzer_database_password }}"
         attributes: NOSUPERUSER,NOCREATEDB
         databases:
-          - name: "{{ mutalyzer_database_name }}"
+          - name: mutalyzer
             privileges: ALL
 
 This role is only needed when the `mutalyzer_database_url` variable is `null`
