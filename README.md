@@ -105,6 +105,12 @@ The order above also means database migrations must always keep compatibility
 with the existing codebase, so some may have to be broken down into several
 steps and completed over several deployments.
 
+Migrations that should be completed over several deployments are grouped per
+Mutalyzer release. It is therefore advised to always update Mutalyzer one
+release at a time and never skip a release to ensure database consistency and
+zero-downtime deployments. This can be controled by setting the
+`mutalyzer_git_branch` role variable to a release tag.
+
 
 ### User environment
 
