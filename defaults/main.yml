@@ -12,6 +12,7 @@ mutalyzer_service_json_proxy_read_timeout: 60
 mutalyzer_service_json_worker_class: sync
 mutalyzer_service_json_workers: 1
 mutalyzer_service_json_timeout: 30
+mutalyzer_service_json_hosts: "{{ mutalyzer_server_name }}"
 
 mutalyzer_service_soap_proxy_read_timeout: 60
 mutalyzer_service_soap_worker_class: sync
