@@ -100,6 +100,7 @@
 
 - name: install python ipython package
   pip: name=ipython
+       version=5.8.0
        virtualenv=/opt/mutalyzer/versions/{{ mutalyzer_current }}/virtualenv
        state=present
   become_user: mutalyzer
